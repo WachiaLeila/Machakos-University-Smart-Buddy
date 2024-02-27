@@ -1,4 +1,4 @@
-<img  alt="logo_mksu" width="80px" src="MKSU_LOGO-removebg-preview-2.png" />
+<img  alt="logo_mksu" width="180px" src="MKSU_LOGO-removebg-preview-2.png" />
 
 # Machakos-University-Smart-Buddy
 
