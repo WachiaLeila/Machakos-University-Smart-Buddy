@@ -1,3 +1,5 @@
+<img  alt="logo_milimani_high" width="80px" src="MKSU_LOGO-removebg-preview-2" />
+
 # Machakos-University-Smart-Buddy
 
 “Excellence in Connecting Campus Life.”
