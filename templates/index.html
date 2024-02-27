@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Smart Buddy</title>
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link href="{{ url_for('static', filename='main.css') }}" rel='stylesheet'>
+
+    </head>
+    <body>
+        <div class="chat-container">
+            <div class="chat-header">
+                <img src="{{ url_for('static', filename='Machakos_University_Logo.png') }}" alt="Logo" width="70px"> <br> Machakos University Smart Buddy
+            </div>
+            <div class="chat-history" id="chatHistory"></div>
+            <div class="digital-clock" id="digitalClock"></div>
+            <div class="chat-input">
+                <input type="text" id="userInput" placeholder="Type your message here">
+                <button id="submitButton"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    
+        <script>
+            document.getElementById('submitButton').addEventListener('click', function(event) {
+                event.preventDefault();
+                sendMessage();
+            });
+    
+            document.getElementById('userInput').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    sendMessage();
+                }
+            });
+    
+            function sendMessage() {
+                var userInput = document.getElementById('userInput').value;
+                if (userInput.trim() !== '') {
+                    appendMessage('user', userInput);
+                    document.getElementById('userInput').value = '';
+                    fetch('/process', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            'userInput': userInput
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        var botResponse = data.response;
+                        appendMessage('bot', botResponse);
+                    });
+                }
+            }
+    
+            function appendMessage(sender, message) {
+                var chatHistory = document.getElementById('chatHistory');
+                var messageElement = document.createElement('div');
+                var messageContainer = document.createElement('div');
+                messageContainer.classList.add('message-container');
+                messageElement.classList.add('message', sender === 'user' ? 'user' : 'bot');
+                messageElement.textContent = message;
+                chatHistory.appendChild(messageElement);
+                chatHistory.appendChild(messageContainer);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+
+            // Function to update the digital clock
+            function updateClock() {
+                var now = new Date();
+                var hours = now.getHours();
+                var minutes = now.getMinutes();
+                var seconds = now.getSeconds();
+                var ampm = hours >= 12 ? 'PM' : 'AM'; // Determine if it's AM or PM
+
+                // Convert hours to 12-hour format
+                hours = hours % 12;
+                hours = hours ? hours : 12; // Handle midnight (0 hours)
+
+                // Add leading zeros to single digit numbers
+                hours = hours < 10 ? '0' + hours : hours;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+
+                // Display the time in HH:MM:SS format
+                document.getElementById('digitalClock').textContent = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+            }
+
+            // Update the clock every second
+            setInterval(updateClock, 1000);
+        </script>
+    </body>
+</html>
